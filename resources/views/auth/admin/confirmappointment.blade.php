@@ -59,7 +59,7 @@
             </div>
 
             <!-- Nav Item - Charts -->
-            <li class="nav-item  active">
+            <li class="nav-item">
                 <a class="nav-link " href="{{ route('adminViewBatch') }}">
                     <i class="fas fa-fw fa-book-medical"></i>
                     <span>View Vaccine Batch Info</span></a>
@@ -69,7 +69,7 @@
                     <i class="fas fa-fw fa-tasks"></i>
                     <span>Record New Vaccine Batch</span></a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item  active">
                 <a class="nav-link" href="{{ route('adminConfirmAppointment') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Confirm Vacc. Appointment</span></a>
@@ -139,55 +139,57 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-secondary">List of Vaccine Batch (At {{ Auth::user()->centreName }})</h6>
+                            <h6 class="m-0 font-weight-bold text-secondary">List of Unaccepted Appointments (At {{ Auth::user()->centreName }})</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Batch No</th>
-                                            <th>Expiry Date</th>
-                                            <th>Qty Available</th>
-                                            <th>Qty Administered</th>
-                                            <th>Vaccine Name</th>
+                                            <th>Appointment Date</th>
+                                            <th>Status</th>
+                                            <th>Patient Name</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
-                                            <th>Batch No</th>
-                                            <th>Expiry Date</th>
-                                            <th>Qty Available</th>
-                                            <th>Qty Administered</th>
-                                            <th>Vaccine Name</th>
+                                            <th>Appointment Date</th>
+                                            <th>Status</th>
+                                            <th>Patient Name</th>
+                                            <th>Action</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
                                         @php
                                             $datacount = 0;
                                         @endphp
-                                        @foreach($batches as $key=> $data)
+                                        @foreach($vaccinations as $key=> $data)
                                             @if ($data->centreName == Auth::user()->centreName)
-                                                <tr>                
-                                                    <td>{{$data->batchNo}}</td>
-                                                    <td>{{$data->expiryDate}}</td>
-                                                    <td>{{$data->quantityAvailable}}</td>
-                                                    <td>{{$data->quantityAdministered}}</td>
-                                                    @foreach($vaccine as $key=> $data2)
-                                                        @if($data->vaccineID == $data2->vaccineID)
-                                                            <td>{{$data2->vaccineName}}</td>  
-                                                        @endif
-                                                    @endforeach
-                                                </tr>
-                                                @php
-                                                    $datacount++;   
-                                                @endphp
+                                                @if ($data->status == "Pending")
+                                                    <tr>                
+                                                        <td>{{$data->appointmentDate}}</td>
+                                                        <td>{{$data->status}}</td>
+                                                        <td>{{$data->patientName}}</td>
+                                                        <td colspan="2" class="action">
+                                                            <form class="needs-validation" novalidate="" method="POST" action="{{route('adminConfirmAppointment')}}">
+                                                                @csrf
+                                                                <input type="hidden" id="vaccinationID" name="vaccinationID" value="{{$data->vaccinationID}}">
+                                                                <button type="submit" name="action" value="Confirmed" class="btn btn-success btn-sm">
+                                                                    Confirm Appointment
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    @php
+                                                        $datacount++;   
+                                                    @endphp
+                                                @endif
                                             @endif
                                         @endforeach
                                         @if ($datacount <= 0)
                                             <tr> 
                                                 <td> No data found in database. </td>
-                                                <td> - </td>
                                                 <td> - </td>
                                                 <td> - </td>
                                                 <td> - </td>
@@ -236,5 +238,4 @@
             <script src="/js/demo/chart-pie-demo.js"></script>
 
 </body>
-
 </html>

@@ -74,7 +74,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('patientHistory') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>View Vaccine History</span></a>
             </li>
@@ -183,11 +183,12 @@
                                             <div class="col-12" id="sandbox-container">
                                                 <label for="date" class="form-label">Date of Appointment</label>
                                                 <input type="text" class="form-control @error('date') is-invalid @enderror" id="date" name="date" placeholder="yyyy-mm-dd" required=""  autocomplete="off">
-                                                @error('date')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
+                                                @if ($errors->any())
+                                                    <br>
+                                                    <p style="color:red"> <b>
+                                                        {{$errors->first()}} </b>
+                                                    </p>                                                                    
+                                                @endif
                                             </div>
                                         </div>
 

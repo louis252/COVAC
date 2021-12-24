@@ -33,17 +33,20 @@ Route::get('logout', 'App\Http\Controllers\Auth\LoginController@logout')->name('
 
 /* Patient Dashboard Routes */
 Route::group(['middleware' => 'patient'], function () {
+    
     //Dashboard
     Route::get('/patient/dashboard', 'App\Http\Controllers\PatientController@dashboard')->name('patientDashboard');
     //Dashboard > Appointment
     Route::get('/patient/appointment', 'App\Http\Controllers\PatientController@appointment')->name('patientAppointment');
     Route::post('/patient/appointment', 'App\Http\Controllers\PatientController@appointmentPost')->name('patientAppointment');
     //Dashboard > View Vaccine History
+    Route::get('/patient/viewhistory', 'App\Http\Controllers\PatientController@history')->name('patientHistory');
 
 });
 
 /* Admin Dashboard Routes */
 Route::group(['middleware' => 'administrator'], function () {
+
     //Dashboard
     Route::get('/admin/dashboard', 'App\Http\Controllers\AdminController@dashboard')->name('adminDashboard');
     //Dashboard > Record New Vaccine Batch
@@ -52,8 +55,11 @@ Route::group(['middleware' => 'administrator'], function () {
     Route::get('/admin/registerbatch', 'App\Http\Controllers\AdminController@registerbatch')->name('adminRegisterBatch');
     Route::post('/admin/registerbatch', 'App\Http\Controllers\AdminController@registerbatchPOST')->name('adminRegisterBatch');
     //Dashboard > Confirm Vaccine Appointment
-
+    Route::get('/admin/confirmappointment', 'App\Http\Controllers\AdminController@confirmappointment')->name('adminConfirmAppointment');
+    Route::post('/admin/confirmappointment', 'App\Http\Controllers\AdminController@confirmappointmentPost')->name('adminConfirmAppointment');
     //Dashboard > Request Vaccination Appointment
+    Route::get('/admin/recordappointment', 'App\Http\Controllers\AdminController@recordappointment')->name('adminRecordAppointment');
+    Route::post('/admin/recordappointment', 'App\Http\Controllers\AdminController@recordappointmentPost')->name('adminRecordAppointment');
 
 });
 

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-
+use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Users;
@@ -33,6 +34,26 @@ class RegisterAdminController extends Controller
     }
 
     /**
+     * Where to redirect users after registration.
+     *
+     * @var string
+     */
+    protected $redirectTo = RouteServiceProvider::HOME;
+
+    public function redirectTo() {
+        if(Auth::user()->ICPassport != NULL) {
+            $this->redirectTo = '/patient/dashboard';
+            return $this->redirectTo;
+        }elseif(Auth::user()->staffID != NULL){
+            $this->redirectTo = '/manager/dashboard';
+            return $this->redirectTo;
+        }else{
+            $this->redirectTo = '/login';
+            return $this->redirectTo;
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -41,7 +62,7 @@ class RegisterAdminController extends Controller
     public function store(Request $request)
     {   
         $validatedData = $request->validate([
-            'username' => ['required', 'string', 'max:15', 'unique:patients'],
+            'username' => ['required', 'string', 'max:15', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'max:25', 'confirmed'],
             'email' => ['required', 'string', 'email', 'max:25'],
             'firstName' => ['required', 'string', 'max:25'],
@@ -60,7 +81,6 @@ class RegisterAdminController extends Controller
         $users->password = Hash::make($request->password);
         $users->email = $request->email;
         $users->fullName = $name;
-        $users->ICPassport = 'NULL';
         $users->staffID = $request->staffID;
         $users->centreName = $request->centreName;
         

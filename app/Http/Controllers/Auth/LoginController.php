@@ -42,22 +42,24 @@ class LoginController extends Controller
 
     public function redirectTo(){
         
-        $users = Auth::user();
-            
-        if($users->ICPassport == "NULL" || $users->ICPassport == "null") {
-            $this->middleware('administrator');
-            $this->redirectTo = '/admin/dashboard';
-            return $this->redirectTo;
-        }
+        if($users = Auth::user()){
 
-        if($users->StaffID == "NULL" || $users->StaffID == "null"){
-            $this->middleware('patient');
-            $this->redirectTo = '/patient/dashboard';
+            if($users->ICPassport == NULL) {
+                $this->middleware('administrator');
+                $this->redirectTo = '/admin/dashboard';
+                return $this->redirectTo;
+            }
+
+            if($users->StaffID == NULL){
+                $this->middleware('patient');
+                $this->redirectTo = '/patient/dashboard';
+                return $this->redirectTo;
+            }
+            
+            $this->redirectTo = '/login';
             return $this->redirectTo;
+
         }
-        
-        $this->redirectTo = '/login';
-        return $this->redirectTo;
         
     }
 

@@ -3,20 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\batch;
-use App\Models\Healthcare_Centre;
+use App\Models\vaccination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
     public function dashboard(){
         
+        if(Auth::user()->ICPassport != NULL){
+            return redirect('patient/dashboard');
+        }
+
         $vaccination = DB::table('vaccinations')->get();
         return view('auth.admin.dashboard', ['vaccinations' => $vaccination]);
 
     }
 
     public function viewbatch(){
+
+        if(Auth::user()->ICPassport != NULL){
+            return redirect('patient/dashboard');
+        }
 
         $batch = DB::table('batches')->get();
         $vaccine = DB::table('vaccine')->get();
@@ -26,6 +35,10 @@ class AdminController extends Controller
 
     public function registerbatch(){
 
+        if(Auth::user()->ICPassport != NULL){
+            return redirect('patient/dashboard');
+        }
+
         $batch = DB::table('batches')->get();
         $vaccine = DB::table('vaccine')->get();
         return view('auth.admin.registerbatch', ['batches' => $batch, 'vaccine' => $vaccine]);
@@ -33,6 +46,18 @@ class AdminController extends Controller
     }
 
     public function registerbatchPost(Request $request){
+
+        if(strlen($request->date) != 10 && $request->total < 0){
+            return back()->with(['err' => "Invalid date format, and number of available vaccine"]);
+        }
+
+        if(strlen($request->date) != 10){
+            return back()->with(['dateerr' => "Invalid date."]);
+        }
+
+        if($request->total < 0){
+            return back()->with(['quantityerr' => 'Invalid quantity of available vaccine.']);
+        }
 
         $validatedData = $request->validate([
             
@@ -61,24 +86,65 @@ class AdminController extends Controller
 
     public function confirmappointment(){
 
-        return redirect('admin/viewbatch');
+        if(Auth::user()->ICPassport != NULL){
+            return redirect('patient/dashboard');
+        }
+
+        $vaccinations = DB::table('vaccinations')->get();
+        return view('auth.admin.confirmappointment', ['vaccinations' => $vaccinations]);        
+        return redirect('admin/confirmappointment');
 
     }
 
     public function confirmappointmentPost(Request $request){
 
-        return redirect('admin/viewbatch');
+        vaccination::where('vaccinationID', $request->vaccinationID)->update([
+            'status' => "Confirmed",
+        ]);
+      
+        return redirect('admin/confirmappointment');
 
     }
 
-    public function administerappointment(){
+    public function recordappointment(){
 
-        return redirect('admin/viewbatch');
+        if(Auth::user()->ICPassport != NULL){
+            return redirect('patient/dashboard');
+        }
+
+        $vaccinations = DB::table('vaccinations')->get();
+        $batch = DB::table('batches')->get();
+        $vaccine = DB::table('vaccine')->get();
+        return view('auth.admin.recordappointment', ['vaccinations' => $vaccinations, 'batches' => $batch, 'vaccine' => $vaccine]);        
+        return redirect('admin/recordappointment');
 
     }
 
-    public function administerappointmentPost(){
+    public function recordappointmentPost(Request $request){
 
+        if($request->vaccinationID == "NULL"){
+            return back()->withErrors(['msg' => ["It seems you haven't chose any data yet. Try again."]]);
+        }
+
+        $validatedData = $request->validate([
+            
+            'remarks' => ['required', 'string', 'max:255'],
+
+        ]);
+
+        vaccination::where('vaccinationID', $request->vaccinationID)->update([
+            'status' => "Administered",
+            'remarks' => $request->remarks,
+            'adminName' => Auth::user()->fullName,
+            'batchNo' => $request->batchNo,
+        ]);
+
+        $batch = DB::table('batches')->where('batchNo', $request->batchNo)->first();
+
+        batch::where('batchNo', $request->batchNo)->update([
+            'quantityAvailable' => ($batch->quantityAvailable - 1),
+            'quantityAdministered' => ($batch->quantityAdministered + 1),
+        ]);
         return redirect('admin/viewbatch');
 
     }

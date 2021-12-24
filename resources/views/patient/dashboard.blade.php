@@ -66,7 +66,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('patientHistory') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>View Vaccine History</span></a>
             </li>
@@ -125,7 +125,7 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Patient Dashboard</h1>
+                        <h1 class="h2 mb-0 text-gray-800">Patient Dashboard</h1>
                     </div>
 
                     <!-- Content Row -->
@@ -162,24 +162,24 @@
                                                 Vaccine Status
                                             </div>
                                             @php
-                                                $vaccine = 0;
+                                                $vaccinetot = 0;
                                                 $text = "";
                                             @endphp
                                             @foreach ($vaccination as $key => $data)
                                                 @if ($data->patientName == Auth::user()->fullName)
                                                     @if($data->status == "Administered")
                                                         @php
-                                                            $vaccine += 1;
+                                                            $vaccinetot += 1;
                                                         @endphp
                                                     @endif
                                                 @endif
                                             @endforeach
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                @if ($vaccine == 0)
+                                                @if ($vaccinetot == 0)
                                                     @php
                                                         $text = "You have not been vaccinated";
                                                     @endphp
-                                                @elseif($vaccine == 1)
+                                                @elseif($vaccinetot == 1)
                                                     @php
                                                         $text = "You've taken the first vaccine";
                                                     @endphp
@@ -191,14 +191,22 @@
                                                 {{ $text }}
                                             </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    @if ($message = Session::get('error'))
+                        <div class="alert alert-danger alert-dismissible"> 
+                            <strong>{{ $message }}</strong>
+                        </div>
+                    @endif
+                    @if ($message = Session::get('success'))
+                        <div class="alert alert-success alert-dismissible"> 
+                            <strong>{{ $message }}</strong>
+                        </div>
+                    @endif
 
                     <!-- Content Row -->
 
@@ -277,15 +285,23 @@
                                                             @if($ct->batchNo == NULL)
                                                                 <td>Not decided yet.</td>
                                                             @else
-                                                                
+                                                                @foreach ($batches as $key => $data)
+                                                                    @if ($data->batchNo == $ct->batchNo)
+                                                                        @foreach ($vaccine as $key => $data2)
+                                                                            @if ($data2->vaccineID == $data->vaccineID)
+                                                                                <td> {{$data2->vaccineName}} </td>  
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endif
+                                                                @endforeach
                                                             @endif
                                                             
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Vaccination Status</th>
-                                                            @if ($ct->status != 'Pending.')
+                                                            @if ($ct->status == 'Pending')
                                                                 <td>
-                                                                    {{ $ct->status . ' (Wait for confirmation)'}}f
+                                                                    {{ $ct->status . ' (Wait for confirmation)'}}
                                                                 </td>
                                                             @elseif ($ct->status == 'Confirmed')
                                                                 <td>
@@ -293,7 +309,7 @@
                                                                 </td>
                                                             @else
                                                                 <td>
-                                                                    {{ $ct->status . ' (Vaccination Administered)'}}f
+                                                                    {{ $ct->status . ' (Vaccination Administered)'}}
                                                                 </td>
                                                             @endif
                                                         </tr>

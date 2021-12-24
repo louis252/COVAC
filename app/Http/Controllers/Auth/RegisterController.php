@@ -34,10 +34,10 @@ class RegisterController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
 
     public function redirectTo() {
-        if(Auth::user()->ICPassport != "null") {
+        if(Auth::user()->ICPassport != NULL) {
             $this->redirectTo = '/patient/dashboard';
             return $this->redirectTo;
-        }elseif(Auth::user()->staffID != "null"){
+        }elseif(Auth::user()->staffID != NULL){
             $this->redirectTo = '/manager/dashboard';
             return $this->redirectTo;
         }else{
@@ -67,7 +67,7 @@ class RegisterController extends Controller
         
         return Validator::make($data, [
            
-            'username' => ['required', 'string', 'max:15', 'unique:patients'],
+            'username' => ['required', 'string', 'max:15', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'max:25', 'confirmed'],
             'email' => ['required', 'string', 'email', 'max:25'],
             'firstName' => ['required', 'string', 'max:25'],
@@ -98,9 +98,6 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'fullName' => $name,
             'ICPassport' => $data['ICPassport'],
-            'staffID' => "NULL",
-            'centreName' => "NULL",
-
         ]);
 
     }

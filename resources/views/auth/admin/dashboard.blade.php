@@ -60,7 +60,7 @@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('adminViewBatch') }}">
+                <a class="nav-link " href="{{ route('adminViewBatch') }}">
                     <i class="fas fa-fw fa-book-medical"></i>
                     <span>View Vaccine Batch Info</span></a>
             </li>
@@ -70,14 +70,14 @@
                     <span>Record New Vaccine Batch</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('adminConfirmAppointment') }}">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Confirm Vaccine Appointment</span></a>
+                    <span>Confirm Vacc. Appointment</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('adminRecordAppointment') }}">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Record Vaccine Appointment</span></a>
+                    <span>Record Vacc. Appointment</span></a>
             </li>
 
             <!-- Divider -->

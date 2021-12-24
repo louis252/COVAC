@@ -78,14 +78,14 @@
                     <span>Record New Vaccine Batch</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('adminConfirmAppointment') }}">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Confirm Vaccine Appointment</span></a>
+                    <span>Confirm Vacc. Appointment</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('adminRecordAppointment') }}">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Record Vaccine Appointment</span></a>
+                    <span>Record Vacc. Appointment</span></a>
             </li>
 
             <!-- Divider -->
@@ -168,11 +168,12 @@
                                             <div class="col-12" id="sandbox-container">
                                                 <label for="date" class="form-label">Expiry Date</label>
                                                 <input type="text" class="form-control @error('date') is-invalid @enderror" id="date" name="date" placeholder="yyyy-mm-dd" required="" autocomplete="off">
-                                                @error('date')
-                                                    <span class="invalid-feedback" role="alert">
+                                                @if ($message = Session::get('dateerr'))
+                                                    <br>
+                                                    <p style="color:red"> 
                                                         <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
+                                                    </p>    
+                                                @endif
                                             </div>
                                             <br><br><br><br>
                                             <div class="col-12">
@@ -187,11 +188,18 @@
                                             <div class="col-12">
                                                 <label for="total" class="form-label">Quantity Available<span class="text-muted"></span></label>
                                                 <input type="number" class="form-control @error('total') is-invalid @enderror" id="total" name="total" value="200" min="100" max="2000" step="100">
-                                                @error('total')
-                                                    <span class="invalid-feedback" role="alert">
+                                                @if ($message = Session::get('quantityerr'))
+                                                    <br>
+                                                    <p style="color:red"> 
                                                         <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
+                                                    </p>    
+                                                @endif
+                                                @if ($message = Session::get('err'))
+                                                    <br>
+                                                    <p style="color:red"> 
+                                                        <strong>{{ $message }}</strong>
+                                                    </p>    
+                                                @endif
                                             </div>
                                             <br><br><br><br>
                                         </div>
